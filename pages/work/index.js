@@ -33,8 +33,7 @@ const Work = () => {
             >
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. At quis
               modi, vero voluptatibus quasi eveniet! Officia doloribus eum
-              accusantium aliquam, dicta velit nemo repellat? Architecto a
-              deleniti error consequatur blanditiis consequuntur veniam!
+              accusantium aliquam
             </motion.p>
           </div>
           {/* slider */}
