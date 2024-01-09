@@ -26,8 +26,8 @@ const Home = () => {
             exit="hidden"
             className="h1"
           >
-            Transforming Ideas <br /> Into{" "}
-            <span className="text-accent">Digital Reality</span>
+            Turning Complexity <br /> Into{" "}
+            <span className="text-accent">Elgance</span>
           </motion.h1>
 
           {/* subtitle  */}
@@ -38,9 +38,9 @@ const Home = () => {
             exit="hidden"
             className="max-w-sm xl:max-w-xl mx-auto xl:mx-0 mb-10 xl:mb-16"
           >
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Officia
-            ullam nisi nulla necessitatibus eligendi natus, impedit aut
-            explicabo, beatae totam quis id alias!
+            Coding is my canvas, and I paint with the palette of Full Stack
+            Development and DevOps, creating masterpieces in the ever-evolving
+            landscape of technology.
           </motion.p>
 
           {/* button  */}
@@ -66,7 +66,7 @@ const Home = () => {
         <div className="bg-none xl:bg-explosion xl:bg-cover xl:bg-right xl:bg-no-repeat w-full h-full absolute mix-blend-color-dodge translate-z-0"></div>
         {/* particles  */}
         <PartclesContainer />
-        
+
         {/* avatar iamge  */}
         <motion.div
           variants={fadeIn("up", 0.5)}
