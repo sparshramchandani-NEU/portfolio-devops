@@ -41,11 +41,25 @@ const aboutData = [
     info: [
       {
         title: "Languages",
-        icons: [<FaJava/>, <FaPython/>, <FaSwift/>, <FaAngular/>, <FaRust/>],
+        icons: [
+          <FaJava />,
+          <FaPython />,
+          <FaSwift />,
+          <FaAngular />,
+          <FaRust />,
+        ],
       },
       {
         title: "DevOps",
-        icons: [<FaGithub/>, <FaAws/>, <FaJenkins/>, <FaGoogle/>, <FaDocker/>, <FaMicrosoft/>, <SiTerraform/>],
+        icons: [
+          <FaGithub />,
+          <FaAws />,
+          <FaJenkins />,
+          <FaGoogle />,
+          <FaDocker />,
+          <FaMicrosoft />,
+          <SiTerraform />,
+        ],
       },
       {
         title: "Web Development",
@@ -60,7 +74,7 @@ const aboutData = [
       },
       {
         title: "Databases",
-        icons: [<SiOracle />, <SiMysql />, <SiMongodb />, <SiPostgresql/>],
+        icons: [<SiOracle />, <SiMysql />, <SiMongodb />, <SiPostgresql />],
       },
       {
         title: "UI/UX Design",
@@ -158,12 +172,12 @@ const About = () => {
             apps.
           </motion.p>
           {/* counters */}
-          <motion.div 
-          variants={fadeIn("right", 0.6)}
-          initial="hidden"
-          animate="show"
-          exit="hidden"
-          className="hidden md:flex md:max-w-xl xl:max-w-none mx-auto xl:mx-0 mb-8"
+          <motion.div
+            variants={fadeIn("right", 0.6)}
+            initial="hidden"
+            animate="show"
+            exit="hidden"
+            className="hidden md:flex md:max-w-xl xl:max-w-none mx-auto xl:mx-0 mb-8"
           >
             <div className="flex flex-1 xl:gap-6">
               {/* experience */}
@@ -179,12 +193,12 @@ const About = () => {
           </motion.div>
         </div>
         {/* info  */}
-        <motion.div 
-        variants={fadeIn("left", 0.4)}
-        initial="hidden"
-        animate="show"
-        exit="hidden"
-        className="flex flex-col w-full xl:max-w-[48%] h-[480px]"
+        <motion.div
+          variants={fadeIn("left", 0.4)}
+          initial="hidden"
+          animate="show"
+          exit="hidden"
+          className="flex flex-col w-full xl:max-w-[48%] h-[480px]"
         >
           <div className="flex gap-x-4 xl:gap-x-8 mx-auto xl:mx-0 mb-4">
             {aboutData.map((item, itemIndex) => {
@@ -193,7 +207,7 @@ const About = () => {
                   key={itemIndex}
                   className={` ${
                     index === itemIndex &&
-                    'text-accent after:w-[100%] after:bg-accent after:transition-all after:duration-300'
+                    "text-accent after:w-[100%] after:bg-accent after:transition-all after:duration-300"
                   } cursor-pointer capitalize xl:text-lg relative after:w-8 after:h-[2px] after:bg-accent after:absolute after:-bottom-1 after:left-0`}
                   onClick={() => setIndex(itemIndex)}
                 >
@@ -202,7 +216,7 @@ const About = () => {
               );
             })}
           </div>
-          <div className="py-2 xl:py-6 flex flex-col gap-y-2 xl:gap-y-4 items-center xl:items-start">
+          <div className="py-2 xl:py-6 flex flex-col gap-y-2 xl:gap-y-4 items-center xl:items-start overflow-y-auto">
             {aboutData[index].info.map((item, itemIndex) => {
               return (
                 <div
