@@ -1,0 +1,26 @@
+replicaCount: 1
+image:
+  repository: us-central1-docker.pkg.dev/astute-baton-430219-i9/portfolio/app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "portfolio-ip"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "portfolio-ssl"
+    kubernetes.io/ingress.allow-http: "true"
+    ingress.gcp.kubernetes.io/force-ssl-redirect: "true"
+  hosts:
+    - host: sparshramchandani.me
+      paths:
+        - path: /
+          pathType: Prefix
+
+domainName: sparshramchandani.me

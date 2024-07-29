@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    name: Setup, Build, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        project_id: ${{ vars.PROJECT_ID }}
+
+    - name: Check and Create Artifact Registry repository
+      run: |
+          if ! gcloud artifacts repositories describe portfolio --location=us-central1 &>/dev/null; then
+            gcloud artifacts repositories create portfolio \
+              --repository-format=docker \
+              --location=us-central1 \
+              --description="Portfolio application repository"
+          else
+            echo "Artifact Registry repository 'portfolio' already exists."
+          fi
+
+    - name: Configure Docker
+      run: |
+        gcloud --quiet auth configure-docker us-central1-docker.pkg.dev
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+
+    - name: Get GKE credentials
+      uses: google-github-actions/get-gke-credentials@v0.2.1
+      with:
+        cluster_name: ${{ vars.GKE_CLUSTER }}
+        location: ${{ vars.GKE_ZONE }}
+
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ vars.REGISTRY }}/${{ vars.IMAGE }}:$GITHUB_SHA .
+        docker build -t ${{ vars.REGISTRY }}/${{ vars.IMAGE }}:latest .
+
+    - name: Push Docker image
+      run: |
+        docker push ${{ vars.REGISTRY }}/${{ vars.IMAGE }}:$GITHUB_SHA
+        docker push ${{ vars.REGISTRY }}/${{ vars.IMAGE }}:latest
+
+    - name: Set up Helm
+      uses: azure/setup-helm@v1
+      with:
+        version: v3.4.0
+
+    - name: Deploy to GKE
+      run: |
+        helm upgrade --install ${{ vars.DEPLOYMENT_NAME }} ./portfolio-helm \
+          --set image.repository=${{ vars.REGISTRY }}/${{ vars.IMAGE }} \
+          --set image.tag=$GITHUB_SHA \
+          --namespace default

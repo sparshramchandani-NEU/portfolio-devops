@@ -1,27 +1,3 @@
-# FROM node:18-alpine
-
-# # Install necessary dependencies
-# RUN apk add --no-cache libc6-compat
-
-# # Set the working directory
-# WORKDIR /app
-
-# # Copy all files into the container
-# COPY . .
-
-# # Install dependencies
-# RUN npm install
-
-# # Expose port 3000
-# EXPOSE 3000
-
-# # Set environment variable
-# ENV NODE_ENV=development
-
-# # Run the development server
-# CMD ["npm", "run", "dev"]
-
-
 # Base image for building the application
 FROM node:18-alpine AS builder
 
