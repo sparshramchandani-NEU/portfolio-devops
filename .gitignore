@@ -32,3 +32,14 @@ package-lock.json
 # Misc
 *.swp
 *.swo
+
+# Large files and directories
+.terraform/providers/
+.next/cache/
+
+# Specific large files
+.terraform/providers/registry.terraform.io/hashicorp/kubernetes/2.31.0/darwin_arm64/terraform-provider-kubernetes_v2.31.0_x5
+.terraform/providers/registry.terraform.io/hashicorp/google/5.38.0/darwin_arm64/terraform-provider-google_v5.38.0_x5
+.next/cache/webpack/client-development/1.pack
+.next/cache/webpack/client-development/2.pack
+.next/cache/webpack/client-production/0.pack
