@@ -8,8 +8,7 @@ package-lock.json
 
 # Terraform
 .terraform/
-*.tfstate
-*.tfstate.backup
+*.tfstate.*
 *.tfplan
 
 # Helm
