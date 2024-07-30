@@ -13,11 +13,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v0.2.0
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
       with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ vars.PROJECT_ID }}
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
 
     - name: Check and Create Artifact Registry repository
       run: |
@@ -37,11 +39,18 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
+    - name: Set GOOGLE_CREDENTIALS
+      run: echo ${{ secrets.GCP_SA_KEY }} > gcp-key.json
+
     - name: Terraform Init
       run: terraform init
+      env:
+        GOOGLE_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
 
     - name: Get GKE credentials
       uses: google-github-actions/get-gke-credentials@v0.2.1
