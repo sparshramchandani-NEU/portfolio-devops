@@ -1,11 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-portfolio
+  name: {{ include "portfolio.fullname" . }}
+  labels:
+    {{- include "portfolio.labels" . | nindent 4 }}
 spec:
-  selector:
-    app: portfolio
+  type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
-  type: {{ .Values.service.type }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "portfolio.selectorLabels" . | nindent 4 }}
