@@ -76,7 +76,7 @@ resource "google_compute_global_address" "portfolio_ip" {
 # Helm release
 resource "helm_release" "portfolio" {
   name       = "portfolio"
-  chart      = "./portfolio"  # Path to your Helm chart
+  chart      = "./portfolio-helm"  # Path to your Helm chart
   namespace  = "default"
   
   set {
