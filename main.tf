@@ -52,115 +52,40 @@ resource "google_container_node_pool" "primary_nodes" {
 # Google client configuration
 data "google_client_config" "default" {}
 
-# # Kubernetes provider
-# provider "kubernetes" {
-#   host                   = "https://${google_container_cluster.primary.endpoint}"
-#   token                  = data.google_client_config.default.access_token
-#   cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
-# }
+# Kubernetes provider
+provider "kubernetes" {
+  host                   = "https://${google_container_cluster.primary.endpoint}"
+  token                  = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
+}
+
+# Helm provider
+provider "helm" {
+  kubernetes {
+    host                   = "https://${google_container_cluster.primary.endpoint}"
+    token                  = data.google_client_config.default.access_token
+    cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
+  }
+}
 
 # Static IP address
 resource "google_compute_global_address" "portfolio_ip" {
   name = var.static_ip_name
 }
 
-# # Ingress
-# resource "kubernetes_ingress_v1" "portfolio" {
-#   metadata {
-#     name = "portfolio"
-#     annotations = {
-#       "kubernetes.io/ingress.class"                 = "gce"
-#       "kubernetes.io/ingress.global-static-ip-name" = google_compute_global_address.portfolio_ip.name
-#       "ingress.gcp.kubernetes.io/pre-shared-cert"   = "portfolio-ssl"
-#       "kubernetes.io/ingress.allow-http"            = "true"
-#       "ingress.gcp.kubernetes.io/force-ssl-redirect" = "true"
-#     }
-#   }
+# Helm release
+resource "helm_release" "portfolio" {
+  name       = "portfolio"
+  chart      = "./portfolio"  # Path to your Helm chart
+  namespace  = "default"
+  
+  set {
+    name  = "ingress.annotations.kubernetes\\.io/ingress\\.global-static-ip-name"
+    value = google_compute_global_address.portfolio_ip.name
+  }
 
-#   spec {
-#     rule {
-#       host = var.domain_name
-#       http {
-#         path {
-#           path = "/*"
-#           backend {
-#             service {
-#               name = "portfolio"
-#               port {
-#                 number = 80
-#               }
-#             }
-#           }
-#         }
-#       }
-#     }
-#   }
-
-#   depends_on = [google_container_cluster.primary]
-# }
-
-# # Service
-# resource "kubernetes_service_v1" "portfolio" {
-#   metadata {
-#     name = "portfolio"
-#   }
-
-#   spec {
-#     selector = {
-#       app = "portfolio"
-#     }
-
-#     port {
-#       port        = 80
-#       target_port = 3000
-#     }
-
-#     type = "NodePort"
-#   }
-
-#   depends_on = [google_container_cluster.primary]
-# }
-
-# # Deployment
-# resource "kubernetes_deployment_v1" "portfolio" {
-#   metadata {
-#     name = "portfolio"
-#     labels = {
-#       app = "portfolio"
-#     }
-#   }
-
-#   spec {
-#     replicas = 1
-
-#     selector {
-#       match_labels = {
-#         app = "portfolio"
-#       }
-#     }
-
-#     template {
-#       metadata {
-#         labels = {
-#           app = "portfolio"
-#         }
-#       }
-
-#       spec {
-#         container {
-#           image = var.container_image
-#           name  = "portfolio"
-
-#           port {
-#             container_port = 3000
-#           }
-#         }
-#       }
-#     }
-#   }
-
-#   depends_on = [google_container_cluster.primary]
-# }
+  depends_on = [google_container_cluster.primary]
+}
 
 # DNS Zone (assuming it already exists)
 data "google_dns_managed_zone" "portfolio_zone" {
@@ -177,22 +102,22 @@ resource "google_dns_record_set" "portfolio" {
   rrdatas = [google_compute_global_address.portfolio_ip.address]
 }
 
-# # Null resource for cleanup
-# resource "null_resource" "delete_neg" {
-#   triggers = {
-#     cluster_name = google_container_cluster.primary.name
-#     project      = var.project_id
-#     region       = var.region
-#   }
+# Null resource for cleanup
+resource "null_resource" "delete_neg" {
+  triggers = {
+    cluster_name = google_container_cluster.primary.name
+    project      = var.project_id
+    region       = var.region
+  }
 
-#   provisioner "local-exec" {
-#     when    = destroy
-#     command = <<-EOT
-#       gcloud container clusters get-credentials ${self.triggers.cluster_name} --region ${self.triggers.region} --project ${self.triggers.project}
-#       kubectl delete ingress portfolio
-#       sleep 60  # Wait for GCP to delete the NEG
-#     EOT
-#   }
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<-EOT
+      gcloud container clusters get-credentials ${self.triggers.cluster_name} --region ${self.triggers.region} --project ${self.triggers.project}
+      kubectl delete ingress portfolio
+      sleep 60  # Wait for GCP to delete the NEG
+    EOT
+  }
 
-#   depends_on = [kubernetes_ingress_v1.portfolio]
-# }
+  depends_on = [helm_release.portfolio]
+}
