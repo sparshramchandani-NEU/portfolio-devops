@@ -30,13 +30,13 @@ git clone https://github.com/sparshramchandani-NEU/portfolio-devops.git
 cd portfolio-devops
 ```
 
-## Test on local machine
+## Test on the local machine
 ```bash
 npm init
 npm i
 npm run dev
 ```
-You app should be running on localhost:3000
+Your app should be running on localhost:3000
 
 ## Building and pushing the docker image to the Google Artifact Registry
 - ** Create/ Login to [Google Cloud](https://cloud.google.com/) account
@@ -53,7 +53,7 @@ docker buildx build --platform linux/amd64,linux/arm64 -t {SELECTED_REGION}-dock
 
 ## Setting up the Google Cloud
 - Get your domain name from [Namecheap](https://www.namecheap.com/)/ [Godaddy](https://www.godaddy.com/) or any domain providers
-- Create your [Hosted Zone](https://cloud.google.com/dns/docs/zones) n Google Cloud
+- Create your [Hosted Zone](https://cloud.google.com/dns/docs/zones) on Google Cloud
 - Copy the NS records to your domain providers. (I used [Namecheap](https://www.namecheap.com/support/knowledgebase/article.aspx/434/2237/how-do-i-set-up-host-records-for-a-domain/))
 - Get an SSL certificate (I used [ZeroSSL](https://zerossl.com/)for my SSL certificate)
 - Download your certificate
@@ -66,12 +66,22 @@ terraform init
 terraform apply -auto-approve
 ```
 
+## Accessing your GKE cluster through the terminal
+```bash
+gcloud container clusters get-credentials {The name of the GKE cluster} --region {The region to deploy resources} --project {The ID of the Google Cloud project}
+kubectl get nodes
+kubectl get pods
+kubectl get services
+kubectl get ingress
+kubectl get deployment
+```
+
 ## [Setting Up repositry secrets and vaiables for Git Actions]([url](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions)) 
 - Setup your [GCP_SA_KEY](https://cloud.google.com/iam/docs/keys-create-delete) as a repository secret.
 - Setup your DEPLOYMENT_NAME, GKE_CLUSTER, GKE_ZONE, IMAGE, PROJECT_ID, REGISTRY as your repository variables
 
 ## Note
-Do not forget to edit you variables.tf file and portfolio-helm/values.yaml files as per your convenience.
+Do not forget to edit your variables.tf file and portfolio-helm/values.yaml files at your convenience.
 
 ##Authors
 [Sparsh Ramchandani](https://www.linkedin.com/in/sparsh-ramchandani)
