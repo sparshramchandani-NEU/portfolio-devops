@@ -77,7 +77,7 @@ kubectl get deployment
 ```
 
 ## [Setting Up repositry secrets and vaiables for Git Actions]([url](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions)) 
-- Setup your [GCP_SA_KEY](https://cloud.google.com/iam/docs/keys-create-delete) as a repository secret.
+- Setup your [GCP_SA_KEY](https://cloud.google.com/iam/docs/keys-create-delete), INGRESS_HOST, INGRESS_PRE_SHARED_CERT, INGRESS_STATIC_IP_NAME as a repository secret.
 - Setup your DEPLOYMENT_NAME, GKE_CLUSTER, GKE_ZONE, IMAGE, PROJECT_ID, REGISTRY as your repository variables
 
 ## Note
