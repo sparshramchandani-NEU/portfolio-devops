@@ -130,15 +130,19 @@ jobs:
       with:
         version: v3.4.0
 
+    - name: Update Helm chart values
+      run: |
+        sed -i 's|tag: .*|tag: "'$GITHUB_SHA'"|g' portfolio-helm/values.yaml
+
     - name: Validate Helm chart
       run: helm lint ./portfolio-helm
 
     - name: Deploy to GKE
       run: |
         helm upgrade --install ${{ env.DEPLOYMENT_NAME }} ./portfolio-helm \
-          --namespace default \
           --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE }} \
-          --set image.tag=latest
+          --set image.tag=$GITHUB_SHA \
+          --namespace default
 
     - name: Wait for deployment
       run: |
