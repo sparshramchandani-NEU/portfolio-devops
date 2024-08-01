@@ -1,4 +1,4 @@
-# Sparsh Ramchandani Portfolio with DevOps ([sparshramchandani.me]([url](https://sparshramchandani.me/)))
+# Sparsh Ramchandani Portfolio with DevOps ([sparshramchandani.me](https://sparshramchandani.me/))
 This repository contains the code and infrastructure setup for my portfolio website. The website is built using Next.js for the frontend and is deployed on Google Kubernetes Engine (GKE) clusters. 
 
 ## Overview
@@ -39,7 +39,7 @@ npm run dev
 You app should be running on localhost:3000
 
 ## Building and pushing the docker image to the Google Artifact Registry
-- ** Create/ Login to [Google Cloud]([url](https://cloud.google.com/)) account
+- ** Create/ Login to [Google Cloud](https://cloud.google.com/) account
 - ** Create a new project on the console
 - ** Copy the project id and run the following commands
 ```bash
@@ -52,12 +52,12 @@ docker buildx build --platform linux/amd64,linux/arm64 -t {SELECTED_REGION}-dock
 ```
 
 ## Setting up the Google Cloud
-- Get your domain name from [Namecheap]([url](https://www.namecheap.com/))/ [Godaddy]([url](https://www.godaddy.com/)) or any domain providers
-- Create your [Hosted Zone]([url](https://cloud.google.com/dns/docs/zones)) n Google Cloud
-- Copy the NS records to your domain providers. (I used [Namecheap]([url](https://www.namecheap.com/support/knowledgebase/article.aspx/434/2237/how-do-i-set-up-host-records-for-a-domain/)))
-- Get an SSL certificate (I used [ZeroSSL]([url](https://zerossl.com/)) for my SSL certificate)
+- Get your domain name from [Namecheap](https://www.namecheap.com/)/ [Godaddy](https://www.godaddy.com/) or any domain providers
+- Create your [Hosted Zone](https://cloud.google.com/dns/docs/zones) n Google Cloud
+- Copy the NS records to your domain providers. (I used [Namecheap](https://www.namecheap.com/support/knowledgebase/article.aspx/434/2237/how-do-i-set-up-host-records-for-a-domain/))
+- Get an SSL certificate (I used [ZeroSSL](https://zerossl.com/)for my SSL certificate)
 - Download your certificate
-- Follow the steps listed on [this page]([url](https://help.zerossl.com/hc/en-us/articles/360058295994-Installing-SSL-Certificate-on-Google-App-Engine)).
+- Follow the steps listed on [this page](https://help.zerossl.com/hc/en-us/articles/360058295994-Installing-SSL-Certificate-on-Google-App-Engine).
 - Done installing? Click Check Installation to see if your installation was successful.
 
 ## Setting up the infrastructure using terraform
@@ -67,11 +67,11 @@ terraform apply -auto-approve
 ```
 
 ## [Setting Up repositry secrets and vaiables for Git Actions]([url](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions)) 
-- Setup your [GCP_SA_KEY]([url](https://cloud.google.com/iam/docs/keys-create-delete)) as a repository secret.
+- Setup your [GCP_SA_KEY](https://cloud.google.com/iam/docs/keys-create-delete) as a repository secret.
 - Setup your DEPLOYMENT_NAME, GKE_CLUSTER, GKE_ZONE, IMAGE, PROJECT_ID, REGISTRY as your repository variables
 
 ## Note
 Do not forget to edit you variables.tf file and portfolio-helm/values.yaml files as per your convenience.
 
 ##Authors
-[Sparsh Ramchandani]([url](https://www.linkedin.com/in/sparsh-ramchandani))
+[Sparsh Ramchandani](https://www.linkedin.com/in/sparsh-ramchandani)
