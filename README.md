@@ -83,5 +83,5 @@ kubectl get deployment
 ## Note
 Do not forget to edit your variables.tf file and portfolio-helm/values.yaml files at your convenience.
 
-##Authors
+## Authors
 [Sparsh Ramchandani](https://www.linkedin.com/in/sparsh-ramchandani)
