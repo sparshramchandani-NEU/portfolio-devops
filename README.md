@@ -39,9 +39,9 @@ npm run dev
 Your app should be running on localhost:3000
 
 ## Building and pushing the docker image to the Google Artifact Registry
-- ** Create/ Login to [Google Cloud](https://cloud.google.com/) account
-- ** Create a new project on the console
-- ** Copy the project id and run the following commands
+- Create/ Login to [Google Cloud](https://cloud.google.com/) account
+- Create a new project on the console
+- Copy the project id and run the following commands
 ```bash
 gcloud auth login                                      
 gcloud config set project (YOUR_PROJECT_ID}
