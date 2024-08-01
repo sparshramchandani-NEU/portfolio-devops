@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: us-central1-docker.pkg.dev/astute-baton-430219-i9/portfolio/app
+  repository: Image repository path
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -18,12 +18,12 @@ ingress:
   className: "gce"
   annotations:
     kubernetes.io/ingress.class: gce
-    kubernetes.io/ingress.global-static-ip-name: portfolio-ip
-    ingress.gcp.kubernetes.io/pre-shared-cert: portfolio-ssl
+    kubernetes.io/ingress.global-static-ip-name: The name of the static IP address
+    ingress.gcp.kubernetes.io/pre-shared-cert: Name of the SSL certificate
     kubernetes.io/ingress.allow-http: "true"
     ingress.gcp.kubernetes.io/force-ssl-redirect: "true"
   hosts:
-    - host: sparshramchandani.me
+    - host: The domain name for the portfolio
       paths:
         - path: /
           pathType: Prefix
