@@ -21,7 +21,55 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # ... (previous steps remain the same)
+    - name: Set up GCP credentials
+      run: echo '${{ secrets.GCP_SA_KEY }}' > gcp-key.json
+      
+    - name: Verify credential file
+      run: |
+        if [ -s gcp-key.json ]; then
+          echo "Credential file exists and is not empty"
+        else
+          echo "Credential file is missing or empty"
+          exit 1
+        fi
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ env.PROJECT_ID }}
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Check and Create Artifact Registry repository
+      run: |
+        if ! gcloud artifacts repositories describe portfolio --location=us-central1 &>/dev/null; then
+          gcloud artifacts repositories create portfolio \
+            --repository-format=docker \
+            --location=us-central1 \
+            --description="Portfolio application repository"
+        else
+          echo "Artifact Registry repository 'portfolio' already exists."
+        fi
+
+    - name: Configure Docker
+      run: gcloud --quiet auth configure-docker us-central1-docker.pkg.dev
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: terraform init
+      env:
+        GOOGLE_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+
+    - name: Get GKE credentials
+      uses: google-github-actions/get-gke-credentials@v1
+      with:
+        cluster_name: ${{ env.GKE_CLUSTER }}
+        location: ${{ env.GKE_ZONE }}
 
     - name: Build Docker image
       run: |
