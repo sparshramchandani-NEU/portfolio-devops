@@ -66,5 +66,12 @@ terraform init
 terraform apply -auto-approve
 ```
 
-#Authors
+## [Setting Up repositry secrets and vaiables for Git Actions]([url](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions)) 
+- Setup your [GCP_SA_KEY]([url](https://cloud.google.com/iam/docs/keys-create-delete)) as a repository secret.
+- Setup your DEPLOYMENT_NAME, GKE_CLUSTER, GKE_ZONE, IMAGE, PROJECT_ID, REGISTRY as your repository variables
+
+## Note
+Do not forget to edit you variables.tf file and portfolio-helm/values.yaml files as per your convenience.
+
+##Authors
 [Sparsh Ramchandani]([url](https://www.linkedin.com/in/sparsh-ramchandani))
