@@ -99,7 +99,7 @@ const aboutData = [
     title: "experience",
     info: [
       {
-        title: "Sofwtare Engineer, Samsung",
+        title: "Software Engineer, Samsung",
         stage: "August 2019 - August 2022",
       },
     ],
