@@ -88,11 +88,7 @@ const aboutData = [
       {
         title: "Northeaster University, Boston, MA",
         stage: "September 2022 - May 2024",
-      },
-      {
-        title: "Mumbai University, Mumbai, India",
-        stage: "2016 - 2019",
-      },
+      }
     ],
   },
   {
