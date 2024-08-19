@@ -8,7 +8,7 @@ export default function Document() {
         <link rel="icon" href="/logo.png" type="image/png" />
         
         {/* Title */}
-        <title>Sparsh Ramchandani's Portfolio</title>
+        <title>Sparsh Ramchandani</title>
       </Head>
       <body>
         <Main />
