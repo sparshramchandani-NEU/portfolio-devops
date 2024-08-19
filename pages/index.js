@@ -15,18 +15,6 @@ import { fadeIn } from "../variants";
 const Home = () => {
   return (
     <div className="bg-primary/60 h-full overflow-y-auto">
-      {/* logo */}
-      <div className="flex items-center justify-center xl:justify-start py-4">
-        <Image
-          src="/logo.png"
-          alt="Logo"
-          width={50} // adjust the width as needed
-          height={50} // adjust the height as needed
-        />
-        <h1 className="ml-4 text-xl font-bold text-white">
-          Sparsh Ramchandani's Portfolio
-        </h1>
-      </div>
       {/* text  */}
       <div className="w-full h-full bg-gradient-to-r from-primary/10 via-black/30 to-black/10">
         <div className="text-center flex flex-col justify-center xl:pt-40 xl:text-left h-full container mx-auto">
