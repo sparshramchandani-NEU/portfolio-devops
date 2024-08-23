@@ -8,7 +8,7 @@ import { BiLogoGmail } from "react-icons/bi";
 const Socials = () => {
   return (
     <div className="flex items-center gap-x-5 text-2xl">
-      <Link href={"http://linkedin.com/in/sparsh-ramchandani"} className="hover:text-accent transition-all duration-300">
+      <Link href={"https://www.linkedin.com/in/sparsh-ramchandani/"} className="hover:text-accent transition-all duration-300">
         <RiLinkedinBoxFill />
       </Link>
       <Link href={"https://github.com/sparshramchandani-NEU"} className="hover:text-accent transition-all duration-300">
