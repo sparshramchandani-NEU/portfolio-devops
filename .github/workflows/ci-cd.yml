@@ -81,50 +81,6 @@ jobs:
         docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:$GITHUB_SHA
         docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
 
-    - name: Create values.yaml
-      run: |
-        mkdir -p ./portfolio-helm
-        cat << EOF > ./portfolio-helm/values.yaml
-        replicaCount: 1
-
-        image:
-          repository: ${{ env.REGISTRY }}/${{ env.IMAGE }}
-          tag: latest
-          pullPolicy: Always
-
-        nameOverride: ""
-        fullnameOverride: ""
-
-        service:
-          type: NodePort
-          port: 80
-          targetPort: 3000
-
-        ingress:
-          enabled: true
-          className: "gce"
-          annotations:
-            kubernetes.io/ingress.class: gce
-            kubernetes.io/ingress.global-static-ip-name: ${{ secrets.INGRESS_STATIC_IP_NAME }}
-            ingress.gcp.kubernetes.io/pre-shared-cert: ${{ secrets.INGRESS_PRE_SHARED_CERT }}
-            kubernetes.io/ingress.allow-http: "true"
-            ingress.gcp.kubernetes.io/force-ssl-redirect: "true"
-          hosts:
-            - host: ${{ secrets.INGRESS_HOST }}
-              paths:
-                - path: /
-                  pathType: Prefix
-          tls: []
-
-        resources: {}
-
-        nodeSelector: {}
-
-        tolerations: []
-
-        affinity: {}
-        EOF
-
     - name: Set up Helm
       uses: azure/setup-helm@v3
       with:
@@ -139,10 +95,6 @@ jobs:
 
     - name: Deploy to GKE
       run: |
-        # Delete existing pods
-        kubectl delete pods -l app=${{ env.DEPLOYMENT_NAME }} -n default --grace-period=0 --force || true
-        
-        # Update the deployment with the new image
         helm upgrade --install ${{ env.DEPLOYMENT_NAME }} ./portfolio-helm \
           --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE }} \
           --set image.tag=$GITHUB_SHA \
@@ -150,16 +102,7 @@ jobs:
 
     - name: Wait for deployment
       run: |
-        kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n default --timeout=15m
-
-    - name: Verify new pods
-      run: |
-        kubectl get pods -l app=${{ env.DEPLOYMENT_NAME }} -n default
-        kubectl describe pods -l app=${{ env.DEPLOYMENT_NAME }} -n default
-
-    - name: Wait for deployment
-      run: |
-        kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n default --timeout=15m
+        kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n default --timeout=5m
 
     - name: Clean up credentials
       if: always()
