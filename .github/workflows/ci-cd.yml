@@ -22,10 +22,8 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up GCP credentials
-      run: echo '${{ secrets.GCP_SA_KEY }}' > gcp-key.json
-      
-    - name: Verify credential file
       run: |
+        echo '${{ secrets.GCP_SA_KEY }}' > gcp-key.json
         if [ -s gcp-key.json ]; then
           echo "Credential file exists and is not empty"
         else
@@ -93,16 +91,41 @@ jobs:
     - name: Validate Helm chart
       run: helm lint ./portfolio-helm
 
-    - name: Deploy to GKE
+    - name: Create deployment script
       run: |
-        helm upgrade --install ${{ env.DEPLOYMENT_NAME }} ./portfolio-helm \
-          --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE }} \
-          --set image.tag=$GITHUB_SHA \
-          --namespace default
+        cat << EOF > deploy.sh
+        #!/bin/bash
+        set -e
 
-    - name: Wait for deployment
-      run: |
-        kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n default --timeout=5m
+        # Delete the existing release if it exists
+        helm delete $DEPLOYMENT_NAME --namespace default || true
+
+        # Wait for resources to be cleaned up
+        sleep 10
+
+        # Install a fresh release
+        helm install $DEPLOYMENT_NAME ./portfolio-helm \
+          --set image.repository=$REGISTRY/$IMAGE \
+          --set image.tag=$GITHUB_SHA \
+          --namespace default \
+          --debug
+
+        # Wait for deployment to complete
+        kubectl rollout status deployment/$DEPLOYMENT_NAME -n default --timeout=5m
+
+        # Get deployment status
+        kubectl get deployments -n default
+        kubectl get pods -n default
+        kubectl get ingress -n default
+        EOF
+        chmod +x deploy.sh
+
+    - name: Deploy to GKE
+      run: ./deploy.sh
+      env:
+        DEPLOYMENT_NAME: ${{ env.DEPLOYMENT_NAME }}
+        REGISTRY: ${{ env.REGISTRY }}
+        IMAGE: ${{ env.IMAGE }}
 
     - name: Clean up credentials
       if: always()
