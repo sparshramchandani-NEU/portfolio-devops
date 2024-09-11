@@ -139,10 +139,23 @@ jobs:
 
     - name: Deploy to GKE
       run: |
+        # Delete existing pods
+        kubectl delete pods -l app=${{ env.DEPLOYMENT_NAME }} -n default --grace-period=0 --force || true
+        
+        # Update the deployment with the new image
         helm upgrade --install ${{ env.DEPLOYMENT_NAME }} ./portfolio-helm \
           --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE }} \
           --set image.tag=$GITHUB_SHA \
           --namespace default
+
+    - name: Wait for deployment
+      run: |
+        kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n default --timeout=15m
+
+    - name: Verify new pods
+      run: |
+        kubectl get pods -l app=${{ env.DEPLOYMENT_NAME }} -n default
+        kubectl describe pods -l app=${{ env.DEPLOYMENT_NAME }} -n default
 
     - name: Wait for deployment
       run: |
