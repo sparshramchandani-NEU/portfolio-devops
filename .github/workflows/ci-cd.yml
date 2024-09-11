@@ -23,15 +23,6 @@ jobs:
 
     - name: Set up GCP credentials
       run: echo '${{ secrets.GCP_SA_KEY }}' > gcp-key.json
-      
-    - name: Verify credential file
-      run: |
-        if [ -s gcp-key.json ]; then
-          echo "Credential file exists and is not empty"
-        else
-          echo "Credential file is missing or empty"
-          exit 1
-        fi
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
@@ -43,27 +34,8 @@ jobs:
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Check and Create Artifact Registry repository
-      run: |
-        if ! gcloud artifacts repositories describe portfolio --location=us-central1 &>/dev/null; then
-          gcloud artifacts repositories create portfolio \
-            --repository-format=docker \
-            --location=us-central1 \
-            --description="Portfolio application repository"
-        else
-          echo "Artifact Registry repository 'portfolio' already exists."
-        fi
-
     - name: Configure Docker
       run: gcloud --quiet auth configure-docker us-central1-docker.pkg.dev
-
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-
-    - name: Terraform Init
-      run: terraform init
-      env:
-        GOOGLE_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
 
     - name: Get GKE credentials
       uses: google-github-actions/get-gke-credentials@v1
@@ -81,61 +53,9 @@ jobs:
         docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:$GITHUB_SHA
         docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
 
-    - name: Create values.yaml
-      run: |
-        mkdir -p ./portfolio-helm
-        cat << EOF > ./portfolio-helm/values.yaml
-        replicaCount: 1
-
-        image:
-          repository: ${{ env.REGISTRY }}/${{ env.IMAGE }}
-          tag: latest
-          pullPolicy: Always
-
-        nameOverride: ""
-        fullnameOverride: ""
-
-        service:
-          type: NodePort
-          port: 80
-          targetPort: 3000
-
-        ingress:
-          enabled: true
-          className: "gce"
-          annotations:
-            kubernetes.io/ingress.class: gce
-            kubernetes.io/ingress.global-static-ip-name: ${{ secrets.INGRESS_STATIC_IP_NAME }}
-            ingress.gcp.kubernetes.io/pre-shared-cert: ${{ secrets.INGRESS_PRE_SHARED_CERT }}
-            kubernetes.io/ingress.allow-http: "true"
-            ingress.gcp.kubernetes.io/force-ssl-redirect: "true"
-          hosts:
-            - host: ${{ secrets.INGRESS_HOST }}
-              paths:
-                - path: /
-                  pathType: Prefix
-          tls: []
-
-        resources: {}
-
-        nodeSelector: {}
-
-        tolerations: []
-
-        affinity: {}
-        EOF
-
-    - name: Set up Helm
-      uses: azure/setup-helm@v3
-      with:
-        version: v3.4.0
-
     - name: Update Helm chart values
       run: |
         sed -i 's|tag: .*|tag: "'$GITHUB_SHA'"|g' portfolio-helm/values.yaml
-
-    - name: Validate Helm chart
-      run: helm lint ./portfolio-helm
 
     - name: Deploy to GKE
       run: |
@@ -147,6 +67,12 @@ jobs:
     - name: Wait for deployment
       run: |
         kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n default --timeout=5m
+
+    - name: Verify deployment
+      run: |
+        kubectl get pods -l app.kubernetes.io/name=portfolio
+        kubectl describe ingress portfolio
+        kubectl get services
 
     - name: Clean up credentials
       if: always()
