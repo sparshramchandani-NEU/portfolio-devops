@@ -3,7 +3,7 @@ This repository contains the code and infrastructure setup for my portfolio webs
 
 ## Overview
 
-- **Frontend Framework:** Next.js
+- **Frontend Framework:** Next.JS
 - **Containerization:** Docker
 - **Cloud Provider:** Google Cloud Platform (GCP)
 - **Infrastructure as Code:** Terraform
